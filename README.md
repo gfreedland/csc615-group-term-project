@@ -1,5 +1,6 @@
 ## CSC615 Group Term Project
 Authors: George Freedland, George Shen, Cameron Cirini, John Freirez
+
 A program made to run on a RaspberryPi for a self-driving, obstacle-avoiding robot car.
 
 ### Drive On
