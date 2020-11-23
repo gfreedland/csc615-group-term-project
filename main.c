@@ -33,6 +33,16 @@
 #define LINE_SENSOR_R_DO 0;
 #define LINE_SENSOR_C_DO 0;
 
+const int MILLISEC = 1000;
+const int OBSTACLE_WAIT_TIME = 5;
+const int MAX_RUN_TIME = 90;
+
+typedef struct args{
+    int runFlag;
+    int obstacleDetected;
+    //
+} args;
+
 void initilalizePins(){
   //init Motors
   pinMode(MOTOR_VOLT_FL, OUTPUT);
@@ -75,22 +85,26 @@ void initilalizePins(){
 
 //temp thread, taken from assignment 5
 void * irSensor(void *value){
+  /*
     args *arguments = (struct args*)value;
     while(arguments->runFlag == 1){
         if(digitalRead(IR_OUT) == 1){
             printf("Obstacle Detected\n");
         }
     }
+    */
 }
 
 //temp thread, taken from assignment 5
 void * lineSensor(void *value){
+  /*
     args *arguments = (struct args*)value;
     while(arguments->runFlag == 1){
         if(digitalRead(LINE_SENSOR_DO) == 0){
             printf("No Longer on the Line\n");
         }
     }
+    */
 }
 
 int main(void)
@@ -102,22 +116,39 @@ int main(void)
   pthread_t ir;
   pthread_t line;
   
+  args arguments;
+  arguments.runFlag = 1;
+  arguments.obstacleDetected = 0;
+
   // // Run program until threads finish
-  // pthread_create(&ir, NULL, irSensor, NULL);
-  // pthread_create(&line, NULL, lineSensor, NULL);
+  pthread_create(&ir, NULL, irSensor, &arguments);
+  pthread_create(&line, NULL, lineSensor, &arguments);
 
   // // Join/Wait for threads to finish
-  // pthread_join(ir, NULL);
-  // pthread_join(line, NULL);
+  pthread_join(ir, NULL);
+  pthread_join(line, NULL);
 
   // // Clear Pins
-  // clearPins();
+  clearPins();
   printf("Program Ended");
 }
 
-
-
 void clearPins(){
+  pinMode(MOTOR_VOLT_FL, INPUT)
+  pinMode(MOTOR_VOLT_FR, INPUT)
+  pinMode(MOTOR_VOLT_RL, INPUT)
+  pinMode(MOTOR_VOLT_RR, INPUT)
+  pinMode(MOTOR_DIR_FL, INPUT);
+  pinMode(MOTOR_DIR_FR, INPUT);
+  pinMode(MOTOR_DIR_RL, INPUT);
+  pinMode(MOTOR_DIR_RR, INPUT);
 
+  pinMode(LINE_SENSOR_L_VCC, INPUT);
+  pinMode(LINE_SENSOR_R_VCC, INPUT);
+  pinMode(LINE_SENSOR_C_VCC, INPUT);
+
+  digitalWrite(LINE_SENSOR_L_VCC,LOW);
+  digitalWrite(LINE_SENSOR_R_VCC,LOW);
+  digitalWrite(LINE_SENSOR_C_VCC,LOW);
 
 }
