@@ -32,6 +32,8 @@
 #define LINE_SENSOR_L_DO 0;
 #define LINE_SENSOR_R_DO 0;
 #define LINE_SENSOR_C_DO 0;
+//TODO define remaining sensors
+//update existing defitions with corresponding pin numbers
 
 const int MILLISEC = 1000;
 const int OBSTACLE_WAIT_TIME = 5;
@@ -84,27 +86,37 @@ void initilalizePins(){
 }
 
 //temp thread, taken from assignment 5
+//checks for obstacles
 void * irSensor(void *value){
-  /*
     args *arguments = (struct args*)value;
     while(arguments->runFlag == 1){
-        if(digitalRead(IR_OUT) == 1){
+        /*if(digitalRead(IR_OUT) == 1){
             printf("Obstacle Detected\n");
+        }*/
+
+        //TODO condition will be replaced with digitalRead(sensor) call results
+        int temporaryCondition = 1;
+        if(temporaryCondition){
+          arguments->obstacleDetected = 1;
+
+          //TODO Obstacle Avoidance
+          //could be handled by new a thread
+          //or atleast by another function
         }
-    }
-    */
+    } 
 }
 
 //temp thread, taken from assignment 5
+//checks for line, if not avoiding obstacle this adjusts heading
 void * lineSensor(void *value){
-  /*
     args *arguments = (struct args*)value;
     while(arguments->runFlag == 1){
-        if(digitalRead(LINE_SENSOR_DO) == 0){
+      while(arguments->obstacleDetected == 0){
+        /*if(digitalRead(LINE_SENSOR_DO) == 0){
             printf("No Longer on the Line\n");
-        }
+          }*/
+      }
     }
-    */
 }
 
 int main(void)
@@ -115,7 +127,7 @@ int main(void)
   // //initialize arguments
   pthread_t ir;
   pthread_t line;
-  
+
   args arguments;
   arguments.runFlag = 1;
   arguments.obstacleDetected = 0;
@@ -150,5 +162,12 @@ void clearPins(){
   digitalWrite(LINE_SENSOR_L_VCC,LOW);
   digitalWrite(LINE_SENSOR_R_VCC,LOW);
   digitalWrite(LINE_SENSOR_C_VCC,LOW);
+  //TODO clean newly added pins as they come online
+}
 
+void startColdMotors(){
+  softPwmWrite(MOTOR_VOLT_FL,100);
+  softPwmWrite(MOTOR_VOLT_FR,100);
+  softPwmWrite(MOTOR_VOLT_RL,100);
+  softPwmWrite(MOTOR_VOLT_RR,100);
 }
