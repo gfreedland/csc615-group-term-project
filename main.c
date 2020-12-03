@@ -38,11 +38,20 @@
 const int MILLISEC = 1000;
 const int OBSTACLE_WAIT_TIME = 5;
 const int MAX_RUN_TIME = 90;
+const int OPTIMAL_SPEED = 75;
+const int SOFT_ADJUST = 5;
+const int HARD_ADJUST = 10;
 
 typedef struct args{
     int runFlag;
     int obstacleDetected;
-    //
+
+    int frontRightPWM;
+    int frontLeftPWM;
+    int rearRightPWM;
+    int rearLeftPWM;
+    
+    //add a past adjustments stack if necessary
 } args;
 
 void initilalizePins(){
@@ -98,7 +107,7 @@ void * irSensor(void *value){
         int temporaryCondition = 1;
         if(temporaryCondition){
           arguments->obstacleDetected = 1;
-
+          
           //TODO Obstacle Avoidance
           //could be handled by new a thread
           //or atleast by another function
@@ -115,12 +124,52 @@ void * lineSensor(void *value){
         /*if(digitalRead(LINE_SENSOR_DO) == 0){
             printf("No Longer on the Line\n");
           }*/
+
+        //determine 
+        int n = 0;
+
+        if(digitalRead(LINE_SENSOR_R_DO) == 1){
+          n += 1;
+        }
+        if(digitalRead(LINE_SENSOR_C_DO) == 1){
+          n += 2;
+        }
+        if(digitalRead(LINE_SENSOR_L_DO) == 1){
+          n += 4;
+        }
+
+        //TODO
+        //may slow front motors to a stop
+        //add conditions to maintain minimum speed
+        switch (n){
+          case 0:
+            //line lost
+            break;
+          case 1:
+            //adjust hard right
+            digitalWrite(MOTOR_VOLT_FR, arguments->frontRightPWM - HARD_ADJUST);
+            break;
+          case 3:
+            //adjust soft right
+            digitalWrite(MOTOR_VOLT_FR, arguments->frontRightPWM -  SOFT_ADJUST);
+            break;
+          case 4:
+            //adjust hard left
+            digitalWrite(MOTOR_VOLT_FR, arguments->frontLeftPWM - HARD_ADJUST);
+            break;
+          case 6:
+            //adjust soft left
+            digitalWrite(MOTOR_VOLT_FR, arguments->frontLeftPWM - SOFT_ADJUST);
+            break;
+          default:
+            //on line or edgecase
+            break;
+        }
       }
     }
 }
 
-int main(void)
-{
+int main(void){
   wiringPiSetup();
   initializePins();
 
