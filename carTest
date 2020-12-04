@@ -1,0 +1,113 @@
+//Car test
+
+
+#include <wiringPi.h>
+#include <stdio.h>
+#include <softPwm.h>
+
+#define MOTOR_VOLT_FL 0;
+#define MOTOR_VOLT_FR 0;
+#define MOTOR_VOLT_RL 0;
+#define MOTOR_VOLT_RR 0;
+#define MOTOR_DIR_FL 0;
+#define MOTOR_DIR_FR 0;
+#define MOTOR_DIR_RL 0;
+#define MOTOR_DIR_RR 0;
+
+void initilalizePins(){
+  //init Motors
+  pinMode(MOTOR_VOLT_FL, OUTPUT);
+  pinMode(MOTOR_VOLT_FR, OUTPUT);
+  pinMode(MOTOR_VOLT_RL, OUTPUT);
+  pinMode(MOTOR_VOLT_RR, OUTPUT);
+  pinMode(MOTOR_DIR_FL, OUTPUT);
+  pinMode(MOTOR_DIR_FR, OUTPUT);
+  pinMode(MOTOR_DIR_RL, OUTPUT);
+  pinMode(MOTOR_DIR_RR, OUTPUT);
+
+  softPwmCreate(MOTOR_VOLT_FL,0,100);
+  softPwmCreate(MOTOR_VOLT_FR,0,100);
+  softPwmCreate(MOTOR_VOLT_RL,0,100);
+  softPwmCreate(MOTOR_VOLT_RR,0,100); 
+
+  digitalWrite(MOTOR_DIR_FL,HIGH);
+  digitalWrite(MOTOR_DIR_FR,HIGH);
+  digitalWrite(MOTOR_DIR_RL,LOW);
+  digitalWrite(MOTOR_DIR_RR,LOW);
+
+  //init Line Sensors
+
+}
+
+void stopCar(){
+	digitalWrite(MOTOR_VOLT_FL, 0);
+	digitalWrite(MOTOR_VOLT_FR, 0);
+	digitalWrite(MOTOR_VOLT_RL, 0);
+	digitalWrite(MOTOR_VOLT_RR, 0);
+
+}
+
+
+int main(void) {
+	wiringPiSetup ();
+	initilalizePins();
+	
+	delay(5000);
+	
+	
+    //forwards
+    printf("forwards \n");
+	
+	digitalWrite(MOTOR_VOLT_FL, 60);
+	digitalWrite(MOTOR_VOLT_FR, 60);
+	digitalWrite(MOTOR_VOLT_RL, 60);
+	digitalWrite(MOTOR_VOLT_RR, 60);
+	delay(4000);
+	stopCar();
+	
+	//reverse
+	delay(2000);
+    printf("reverse \n");
+	digitalWrite(MOTOR_DIR_FL,LOW);
+    digitalWrite(MOTOR_DIR_FR,LOW);
+    digitalWrite(MOTOR_DIR_RL,HIGH);
+    digitalWrite(MOTOR_DIR_RR,HIGH);
+	digitalWrite(MOTOR_VOLT_FL, 60);
+	digitalWrite(MOTOR_VOLT_FR, 60);
+	digitalWrite(MOTOR_VOLT_RL, 60);
+	digitalWrite(MOTOR_VOLT_RR, 60);
+	delay(4000);
+	stopCar();
+	
+	//left turn
+	delay(2000);
+    printf("left rotate\n");
+	digitalWrite(MOTOR_DIR_FL,LOW);
+    digitalWrite(MOTOR_DIR_FR,HIGH);
+    digitalWrite(MOTOR_DIR_RL,HIGH);
+    digitalWrite(MOTOR_DIR_RR,LOW);
+	digitalWrite(MOTOR_VOLT_FL, 60);
+	digitalWrite(MOTOR_VOLT_FR, 60);
+	digitalWrite(MOTOR_VOLT_RL, 60);
+	digitalWrite(MOTOR_VOLT_RR, 60);
+	delay(3000);
+	stopCar();
+	
+	//right turn
+	delay(2000);
+    printf("right rotate\n");
+	digitalWrite(MOTOR_DIR_FL,HIGH);
+    digitalWrite(MOTOR_DIR_FR,LOW);
+    digitalWrite(MOTOR_DIR_RL,LOW);
+    digitalWrite(MOTOR_DIR_RR,HIGH);
+	digitalWrite(MOTOR_VOLT_FL, 60);
+	digitalWrite(MOTOR_VOLT_FR, 60);
+	digitalWrite(MOTOR_VOLT_RL, 60);
+	digitalWrite(MOTOR_VOLT_RR, 60);
+	delay(3000);
+	stopCar();
+	
+	
+	printf("*****test end*****");
+	return 0;
+}
