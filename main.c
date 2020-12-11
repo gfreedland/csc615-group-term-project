@@ -39,20 +39,20 @@
 //update existing defitions with corresponding pin numbers
 
 #define MOTOR_1_ENABLE 0    // 11 physical pin for motor 1
-#define MOTOR_1_CONTROL_1 2 // 13 physical pin for motor 1
-#define MOTOR_1_CONTROL_2 3 // 15 physical pin for motor 1
+#define MOTOR_1_CONTROL_1 3 // 15 physical pin for motor 1
+#define MOTOR_1_CONTROL_2 2 // 13 physical pin for motor 1
 
-#define MOTOR_2_ENABLE 6    // 11 physical pin for motor 1
-#define MOTOR_2_CONTROL_1 4 // 13 physical pin for motor 1
-#define MOTOR_2_CONTROL_2 5 // 15 physical pin for motor 1
+#define MOTOR_2_ENABLE 6    // 11 physical pin for motor 2
+#define MOTOR_2_CONTROL_1 4 // 13 physical pin for motor 2
+#define MOTOR_2_CONTROL_2 5 // 15 physical pin for motor 2
 
-#define MOTOR_3_ENABLE 12    // 11 physical pin for motor 1
-#define MOTOR_3_CONTROL_1 13 // 13 physical pin for motor 1
-#define MOTOR_3_CONTROL_2 14 // 15 physical pin for motor 1
+#define MOTOR_3_ENABLE 12    // 11 physical pin for motor 3
+#define MOTOR_3_CONTROL_1 14 // 15 physical pin for motor 3
+#define MOTOR_3_CONTROL_2 13 // 13 physical pin for motor 3
 
-#define MOTOR_4_ENABLE 26    // 11 physical pin for motor 1
-#define MOTOR_4_CONTROL_1 10 // 13 physical pin for motor 1
-#define MOTOR_4_CONTROL_2 11 // 15 physical pin for motor 1
+#define MOTOR_4_ENABLE 26    // 11 physical pin for motor 4
+#define MOTOR_4_CONTROL_1 10 // 13 physical pin for motor 4
+#define MOTOR_4_CONTROL_2 11 // 15 physical pin for motor 4
 
 const int MILLISEC = 1000;
 const int OBSTACLE_WAIT_TIME = 5;
@@ -141,10 +141,10 @@ void clearPins()
 
 void moveCarForward()
 {
-  softPwmWrite(MOTOR_1_CONTROL_1, 100);
-  softPwmWrite(MOTOR_2_CONTROL_1, 100);
-  softPwmWrite(MOTOR_3_CONTROL_1, 100);
-  softPwmWrite(MOTOR_4_CONTROL_1, 100);
+  softPwmWrite(MOTOR_1_CONTROL_1, 50);
+  softPwmWrite(MOTOR_2_CONTROL_1, 50);
+  softPwmWrite(MOTOR_3_CONTROL_1, 50);
+  softPwmWrite(MOTOR_4_CONTROL_1, 50);
 }
 
 void stopCar()
