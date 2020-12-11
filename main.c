@@ -139,34 +139,76 @@ void clearPins()
   softPwmWrite(MOTOR_4_CONTROL_2, 0);
 }
 
-void moveCarForward()
-{
-  softPwmWrite(MOTOR_1_CONTROL_1, 50);
-  softPwmWrite(MOTOR_2_CONTROL_1, 50);
-  softPwmWrite(MOTOR_3_CONTROL_1, 50);
-  softPwmWrite(MOTOR_4_CONTROL_1, 50);
-}
-
 void stopCar()
 {
   softPwmWrite(MOTOR_1_CONTROL_1, 0);
   softPwmWrite(MOTOR_2_CONTROL_1, 0);
   softPwmWrite(MOTOR_3_CONTROL_1, 0);
   softPwmWrite(MOTOR_4_CONTROL_1, 0);
+
+  softPwmWrite(MOTOR_1_CONTROL_2, 0);
+  softPwmWrite(MOTOR_2_CONTROL_2, 0);
+  softPwmWrite(MOTOR_3_CONTROL_2, 0);
+  softPwmWrite(MOTOR_4_CONTROL_2, 0);
+}
+
+void moveCarForward()
+{
+  // softPwmWrite(MOTOR_1_CONTROL_2, 0);
+  // softPwmWrite(MOTOR_2_CONTROL_2, 0);
+  // softPwmWrite(MOTOR_3_CONTROL_2, 0);
+  // softPwmWrite(MOTOR_4_CONTROL_2, 0);
+  stopCar();
+  softPwmWrite(MOTOR_1_CONTROL_1, 50);
+  softPwmWrite(MOTOR_2_CONTROL_1, 50);
+  softPwmWrite(MOTOR_3_CONTROL_1, 50);
+  softPwmWrite(MOTOR_4_CONTROL_1, 50);
+}
+
+void moveCarBackward()
+{
+  // softPwmWrite(MOTOR_1_CONTROL_1, 0);
+  // softPwmWrite(MOTOR_2_CONTROL_1, 0);
+  // softPwmWrite(MOTOR_3_CONTROL_1, 0);
+  // softPwmWrite(MOTOR_4_CONTROL_1, 0);
+  stopCar();
+  softPwmWrite(MOTOR_1_CONTROL_2, 50);
+  softPwmWrite(MOTOR_2_CONTROL_2, 50);
+  softPwmWrite(MOTOR_3_CONTROL_2, 50);
+  softPwmWrite(MOTOR_4_CONTROL_2, 50);
+}
+
+void spinCarRight()
+{
+  stopCar();
+  // 2 and 3 forward, 1 and 4 backwards
+  softPwmWrite(MOTOR_2_CONTROL_1, 50);
+  softPwmWrite(MOTOR_3_CONTROL_1, 50);
+  softPwmWrite(MOTOR_1_CONTROL_2, 50);
+  softPwmWrite(MOTOR_4_CONTROL_2, 50);
+}
+
+void spinCarLeft()
+{
+  stopCar();
+  // 2 and 3 forward, 1 and 4 backwards
+  softPwmWrite(MOTOR_2_CONTROL_2, 50);
+  softPwmWrite(MOTOR_3_CONTROL_2, 50);
+  softPwmWrite(MOTOR_1_CONTROL_1, 50);
+  softPwmWrite(MOTOR_4_CONTROL_1, 50);
 }
 
 int main(void)
 {
-
   printf("Welcome to the Raspberry Pi Self Driving \n");
   wiringPiSetup();
   bool condition = true;
   while (condition)
   {
     int input;
-    // printf("Enter 1 2 3 to create 4 5 6 to write 0, and 7 8 9 to write 100\n");
-    // printf("Enter 0 to run assignment and quit\n");
     printf("Enter 1 to start all motors forward, Enter 2 to stop all motors, and 3 to exit the program");
+    printf("Enter 4 to go backwards, Enter 5 to turn right, Enter 6 to turn left");
+
     scanf("%d", &input);
     switch (input)
     {
@@ -178,12 +220,23 @@ int main(void)
     case 2:
       printf("Stop all motors\n");
       stopCar();
-      // softPwmCreate(MOTOR_1_CONTROL_1, 100, 100);
       break;
     case 3:
       printf("Exitting program\n");
       clearPins();
       condition = false;
+      break;
+    case 4:
+      printf("Move all motors backwards\n");
+      moveCarBackward();
+      break;
+    case 5:
+      printf("Spin car Right In Place\n");
+      spinCarRight();
+      break;
+    case 6:
+      printf("Spin car Left In Place\n");
+      spinCarLeft();
       break;
     default:
       printf("not a valid input");
