@@ -447,7 +447,14 @@ void *lineSensor(void *value)
       {
       case 0:
         //line lost
-        break;
+        //handle with extra sensor if needed
+        //if(extra sensor is active){
+        //  turn towards extra sensor
+        //}
+        //else{
+        //   turn away
+        //}
+        //break;
       case 1:
         //adjust hard right
         if (arguments->motor1_c1 > MIN_SPEED && arguments->motor2_c1 > MIN_SPEED)
