@@ -29,16 +29,17 @@
 // #define MOTOR_DIR_RL 0;
 // #define MOTOR_DIR_RR 0;
 
-
-
 // //Line Sensor Voltage Control and Digital Output
- #define LINE_SENSOR_L_VCC 0;
- #define LINE_SENSOR_R_VCC 0;
- #define LINE_SENSOR_C_VCC 0;
- #define LINE_SENSOR_L_DO 0;
- #define LINE_SENSOR_R_DO 0;
- #define LINE_SENSOR_C_DO 0;
+#define LINE_SENSOR_L_VCC 0;
+#define LINE_SENSOR_R_VCC 0;
+#define LINE_SENSOR_C_VCC 0;
+#define LINE_SENSOR_L_DO 0;
+#define LINE_SENSOR_R_DO 0;
+#define LINE_SENSOR_C_DO 0;
 //TODO define remaining sensors
+#define ECHO_VCC 0;
+#define ECHO_TRIG 0;
+#define ECHO_ECHO 0;
 //update existing defitions with corresponding pin numbers
 
 //front right
@@ -63,13 +64,14 @@
 
 const int MILLISEC = 1000;
 const int OBSTACLE_WAIT_TIME = 5;
+const int OBSTACLE_DISTANCE = 50;
 const int MAX_RUN_TIME = 90;
 const int OPTIMAL_SPEED = 50;
 const int MIN_SPEED = 10;
 const int ADJUST = 5;
 //const int HARD_ADJUST = 10;
 
- typedef struct args
+typedef struct args
 {
   int runFlag;
   int obstacleDetected;
@@ -81,7 +83,7 @@ const int ADJUST = 5;
   int motor3_c2;
   int motor4_c1;
   int motor4_c2;
- 
+
   //add a past adjustments stack if necessary
 } args;
 
@@ -115,6 +117,25 @@ void initilalizePins()
   softPwmWrite(MOTOR_4_CONTROL_1, 0);
   softPwmCreate(MOTOR_4_CONTROL_2, 0, 100);
   softPwmWrite(MOTOR_4_CONTROL_2, 0);
+
+  //Init Echo
+  pinMode(ECHO_TRIG, OUTPUT);
+  pinMode(ECHO_ECHO, INPUT);
+  digitalWrite(ECHO_TRIG, 0);
+  digitalWrite(ECHO_ECHO, 0);
+  //Init Line Sensor L
+  pinMode(LINE_SENSOR_L_VCC, OUTPUT);
+  pinMode(LINE_SENSOR_L_DO, INPUT);
+  digitalWrite(LINE_SENSOR_L_VCC, 1);
+  //Init Line Sensor C
+  pinMode(LINE_SENSOR_C_VCC, OUTPUT);
+  pinMode(LINE_SENSOR_C_DO, INPUT);
+  digitalWrite(LINE_SENSOR_C_VCC, 1);
+  //Init Line Sensor R
+  pinMode(LINE_SENSOR_R_VCC, OUTPUT);
+  pinMode(LINE_SENSOR_R_DO, INPUT);
+  digitalWrite(LINE_SENSOR_R_VCC, 1);
+
   delay(100);
 }
 
@@ -281,7 +302,6 @@ int main(void)
       break;
     }
   }
-
   printf("Program Ended");
   return 0;
 }
@@ -349,114 +369,153 @@ int main(void)
 //temp thread, taken from assignment 5
 //checks for obstacles
 void *irSensor(void *value)
- {
-   args *arguments = (struct args *)value;
-   while (arguments->runFlag == 1)
-   {
-     /*if(digitalRead(IR_OUT) == 1){
-             printf("Obstacle Detected\n");
-         }*/
-     //TODO condition will be replaced with digitalRead(sensor) call results
-     int temporaryCondition = 1;
-     /*if (temporaryCondition)
-     {
-       arguments->obstacleDetected = 1
-       //TODO Obstacle Avoidance
-       //could be handled by new a thread
-       //or atleast by another function
-     }*/
-   }
- }
+{
+  args *arguments = (struct args *)value;
+  unsigned int start = micros(), run = micros(), total = micros();
+  double tot;
+  double cm = 1000;
+
+  void updateDistance(unsigned int *start, double *total, double *cm)
+  {
+    digitalWrite(ECHO_TRIG, 0);
+    delayMicroseconds(10);
+    digitalWrite(ECHO_TRIG, 1);
+    delayMicroseconds(10);
+    digitalWrite(ECHO_TRIG, 0);
+    *start = micros();
+    while (digitalRead(ECHO_ECHO) == 0)
+    {
+      *start = micros();
+    }
+    while (digitalRead(ECHO_ECHO) == 1)
+    {
+      *total = micros();
+    }
+    *total = total - start;
+    *cm = (total / 2.0) * .0340;
+  }
+
+  while (arguments->runFlag == 1)
+  {
+
+    updateDistance(&start, &total, &cm);
+    if (cm < OBSTACLE_DISTANCE)
+    {
+      arguments->obstacleDetected = 1;
+      stopCar();
+      delay(OBSTACLE_WAIT_TIME * MILLISEC);
+      updateDistance(&start, &total, &cm);
+      if (cm > OBSTACLE_DISTANCE)
+      {
+        arguments->obstacleDetected = 0;
+      }
+      else
+      {
+        /** TODO */
+        //evade
+      }
+    }
+    else
+  }
+}
 
 //temp thread, taken from assignment 5
 //checks for line, if not avoiding obstacle this adjusts heading
- void *lineSensor(void *value)
- {
-   args *arguments = (struct args *)value;
-   while (arguments->runFlag == 1)
-   {
-     while (arguments->obstacleDetected == 0)
-     {
-       int n = 0;
-       if(digitalRead(LINE_SENSOR_R_DO) == 1)
-       {
-         n += 1;
-       }
-       if (digitalRead(LINE_SENSOR_C_DO) == 1)
-       {
-         n += 2;
-       }
-       if (digitalRead(LINE_SENSOR_L_DO) == 1)
-       {
-         n += 4;
-       }
-       //may slow front motors to a stop
-       //add conditions to maintain minimum speed
-       switch(n)
-       {
-       case 0:
-         //line lost
-         break;
-       case 1:
-         //adjust hard right
-         if(arguments->motor1_c1 > MIN_SPEED && arguments->motor2_c1 > MIN_SPEED){
-           arguments->motor1_c1 -= (2*ADJUST);
-           digitalWrite(MOTOR_1_CONTROL_1, arguments->motor1_c1);
-         }
-         //
-         else {
-           arguments->motor2_c1 += (2*ADJUST);
-           arguments->motor1_c1 = MIN_SPEED;
-           digitalWrite(MOTOR_2_CONTROL_1, arguments->motor2_c1);
-           digitalWrite(MOTOR_1_CONTROL_1, arguments->motor2_c1);
-          }
-         break;
-       case 3:
-         //adjust soft right
-         if(arguments->motor1_c1 > MIN_SPEED && arguments->motor2_c1 > MIN_SPEED){
+void *lineSensor(void *value)
+{
+  args *arguments = (struct args *)value;
+  while (arguments->runFlag == 1)
+  {
+    while (arguments->obstacleDetected == 0)
+    {
+      int n = 0;
+      if (digitalRead(LINE_SENSOR_R_DO) == 1)
+      {
+        n += 1;
+      }
+      if (digitalRead(LINE_SENSOR_C_DO) == 1)
+      {
+        n += 2;
+      }
+      if (digitalRead(LINE_SENSOR_L_DO) == 1)
+      {
+        n += 4;
+      }
+      //may slow front motors to a stop
+      //add conditions to maintain minimum speed
+      switch (n)
+      {
+      case 0:
+        //line lost
+        break;
+      case 1:
+        //adjust hard right
+        if (arguments->motor1_c1 > MIN_SPEED && arguments->motor2_c1 > MIN_SPEED)
+        {
+          arguments->motor1_c1 -= (2 * ADJUST);
+          digitalWrite(MOTOR_1_CONTROL_1, arguments->motor1_c1);
+        }
+        //
+        else
+        {
+          arguments->motor2_c1 += (2 * ADJUST);
+          arguments->motor1_c1 = MIN_SPEED;
+          digitalWrite(MOTOR_2_CONTROL_1, arguments->motor2_c1);
+          digitalWrite(MOTOR_1_CONTROL_1, arguments->motor2_c1);
+        }
+        break;
+      case 3:
+        //adjust soft right
+        if (arguments->motor1_c1 > MIN_SPEED && arguments->motor2_c1 > MIN_SPEED)
+        {
           arguments->motor1_c1 -= (ADJUST);
-           digitalWrite(MOTOR_1_CONTROL_1, arguments->motor1_c1);
-          }
-        else {
+          digitalWrite(MOTOR_1_CONTROL_1, arguments->motor1_c1);
+        }
+        else
+        {
           arguments->motor2_c1 += (ADJUST);
           arguments->motor1_c1 = MIN_SPEED;
           digitalWrite(MOTOR_2_CONTROL_1, arguments->motor2_c1);
           digitalWrite(MOTOR_1_CONTROL_1, arguments->motor2_c1);
-         }
-         break;
-       case 4:
-         //adjust hard left
-         if(arguments->motor2_c1 > MIN_SPEED && arguments->motor1_c1 > MIN_SPEED){
-            arguments->motor2_c1 -= (2*ADJUST);
-            digitalWrite(MOTOR_2_CONTROL_1, arguments->motor2_c1);
-          }
-          else {
-            arguments->motor1_c1 += (2*ADJUST);
-            arguments->motor2_c1 = MIN_SPEED;
-            digitalWrite(MOTOR_2_CONTROL_1, arguments->motor2_c1);
-            digitalWrite(MOTOR_1_CONTROL_1, arguments->motor2_c1);
-          }
-         break;
-       case 6:
-         //adjust soft left
-         if(arguments->motor2_c1 > MIN_SPEED && arguments->motor1_c1 > MIN_SPEED){
-             arguments->motor2_c1 -= (ADJUST);
-             digitalWrite(MOTOR_2_CONTROL_1, arguments->motor2_c1);
-           }
-           else {
-             arguments->motor1_c1 += (ADJUST);
-             arguments->motor2_c1 = MIN_SPEED;
-             digitalWrite(MOTOR_2_CONTROL_1, arguments->motor2_c1);
-             digitalWrite(MOTOR_1_CONTROL_1, arguments->motor2_c1);
-           }
-         break;
-        default:
-         //on line or edgecase
-         break;
-       }
-     }
-   }
- }
+        }
+        break;
+      case 4:
+        //adjust hard left
+        if (arguments->motor2_c1 > MIN_SPEED && arguments->motor1_c1 > MIN_SPEED)
+        {
+          arguments->motor2_c1 -= (2 * ADJUST);
+          digitalWrite(MOTOR_2_CONTROL_1, arguments->motor2_c1);
+        }
+        else
+        {
+          arguments->motor1_c1 += (2 * ADJUST);
+          arguments->motor2_c1 = MIN_SPEED;
+          digitalWrite(MOTOR_2_CONTROL_1, arguments->motor2_c1);
+          digitalWrite(MOTOR_1_CONTROL_1, arguments->motor2_c1);
+        }
+        break;
+      case 6:
+        //adjust soft left
+        if (arguments->motor2_c1 > MIN_SPEED && arguments->motor1_c1 > MIN_SPEED)
+        {
+          arguments->motor2_c1 -= (ADJUST);
+          digitalWrite(MOTOR_2_CONTROL_1, arguments->motor2_c1);
+        }
+        else
+        {
+          arguments->motor1_c1 += (ADJUST);
+          arguments->motor2_c1 = MIN_SPEED;
+          digitalWrite(MOTOR_2_CONTROL_1, arguments->motor2_c1);
+          digitalWrite(MOTOR_1_CONTROL_1, arguments->motor2_c1);
+        }
+        break;
+      default:
+        //on line or edgecase
+        break;
+      }
+    }
+  }
+}
 
 //init Motors
 // pinMode(MOTOR_VOLT_FL, OUTPUT);
