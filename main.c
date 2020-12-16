@@ -28,28 +28,35 @@
 // #define MOTOR_DIR_FR 0;
 // #define MOTOR_DIR_RL 0;
 // #define MOTOR_DIR_RR 0;
+
+
+
 // //Line Sensor Voltage Control and Digital Output
-// #define LINE_SENSOR_L_VCC 0;
-// #define LINE_SENSOR_R_VCC 0;
-// #define LINE_SENSOR_C_VCC 0;
-// #define LINE_SENSOR_L_DO 0;
-// #define LINE_SENSOR_R_DO 0;
-// #define LINE_SENSOR_C_DO 0;
+ #define LINE_SENSOR_L_VCC 0;
+ #define LINE_SENSOR_R_VCC 0;
+ #define LINE_SENSOR_C_VCC 0;
+ #define LINE_SENSOR_L_DO 0;
+ #define LINE_SENSOR_R_DO 0;
+ #define LINE_SENSOR_C_DO 0;
 //TODO define remaining sensors
 //update existing defitions with corresponding pin numbers
 
+//front right
 #define MOTOR_1_ENABLE 0    // 11 physical pin for motor 1
 #define MOTOR_1_CONTROL_1 3 // 15 physical pin for motor 1
 #define MOTOR_1_CONTROL_2 2 // 13 physical pin for motor 1
 
+//front left
 #define MOTOR_2_ENABLE 6    // 11 physical pin for motor 2
 #define MOTOR_2_CONTROL_1 4 // 13 physical pin for motor 2
 #define MOTOR_2_CONTROL_2 5 // 15 physical pin for motor 2
 
+//back left
 #define MOTOR_3_ENABLE 12    // 11 physical pin for motor 3
 #define MOTOR_3_CONTROL_1 14 // 15 physical pin for motor 3
 #define MOTOR_3_CONTROL_2 13 // 13 physical pin for motor 3
 
+//back right
 #define MOTOR_4_ENABLE 26    // 11 physical pin for motor 4
 #define MOTOR_4_CONTROL_1 10 // 13 physical pin for motor 4
 #define MOTOR_4_CONTROL_2 11 // 15 physical pin for motor 4
@@ -57,22 +64,26 @@
 const int MILLISEC = 1000;
 const int OBSTACLE_WAIT_TIME = 5;
 const int MAX_RUN_TIME = 90;
-const int OPTIMAL_SPEED = 75;
-const int SOFT_ADJUST = 5;
-const int HARD_ADJUST = 10;
+const int OPTIMAL_SPEED = 50;
+const int MIN_SPEED = 10;
+const int ADJUST = 5;
+//const int HARD_ADJUST = 10;
 
-// typedef struct args
-// {
-//   int runFlag;
-//   int obstacleDetected;
-
-//   int frontRightPWM;
-//   int frontLeftPWM;
-//   int rearRightPWM;
-//   int rearLeftPWM;
-
-//   //add a past adjustments stack if necessary
-// } args;
+ typedef struct args
+{
+  int runFlag;
+  int obstacleDetected;
+  int motor1_c1;
+  int motor1_c2;
+  int motor2_c1;
+  int motor2_c2;
+  int motor3_c1;
+  int motor3_c2;
+  int motor4_c1;
+  int motor4_c2;
+ 
+  //add a past adjustments stack if necessary
+} args;
 
 void initilalizePins()
 {
@@ -159,10 +170,10 @@ void moveCarForward()
   // softPwmWrite(MOTOR_3_CONTROL_2, 0);
   // softPwmWrite(MOTOR_4_CONTROL_2, 0);
   stopCar();
-  softPwmWrite(MOTOR_1_CONTROL_1, 50);
-  softPwmWrite(MOTOR_2_CONTROL_1, 50);
-  softPwmWrite(MOTOR_3_CONTROL_1, 50);
-  softPwmWrite(MOTOR_4_CONTROL_1, 50);
+  softPwmWrite(MOTOR_1_CONTROL_1, OPTIMAL_SPEED);
+  softPwmWrite(MOTOR_2_CONTROL_1, OPTIMAL_SPEED);
+  softPwmWrite(MOTOR_3_CONTROL_1, OPTIMAL_SPEED);
+  softPwmWrite(MOTOR_4_CONTROL_1, OPTIMAL_SPEED);
 }
 
 void moveCarBackward()
@@ -200,9 +211,36 @@ void spinCarLeft()
 
 int main(void)
 {
-  printf("Welcome to the Raspberry Pi Self Driving \n");
+  //printf("Welcome to the Raspberry Pi Self Driving \n");
   wiringPiSetup();
-  bool condition = true;
+  initilalizePins();
+
+  pthread_t ir;
+  pthread_t line;
+  args arguments;
+  arguments.runFlag = 1;
+  arguments.obstacleDetected = 0;
+
+  arguments.motor1_c1 = OPTIMAL_SPEED;
+  arguments.motor1_c2 = OPTIMAL_SPEED;
+  arguments.motor2_c1 = OPTIMAL_SPEED;
+  arguments.motor2_c2 = OPTIMAL_SPEED;
+  arguments.motor3_c1 = OPTIMAL_SPEED;
+  arguments.motor3_c2 = OPTIMAL_SPEED;
+  arguments.motor4_c1 = OPTIMAL_SPEED;
+  arguments.motor4_c2 = OPTIMAL_SPEED;
+
+  moveCarForward();
+  
+  //Run program until threads finish
+  pthread_create(&ir, NULL, irSensor, &arguments);
+  pthread_create(&line, NULL, lineSensor, &arguments);
+  //Join/Wait for threads to finish
+  pthread_join(ir, NULL);
+  pthread_join(line, NULL);
+
+
+  /*bool condition = true;
   while (condition)
   {
     int input;
@@ -242,7 +280,10 @@ int main(void)
       printf("not a valid input");
       break;
     }
-  }
+  }*/
+
+
+
   printf("Program Ended");
   return 0;
 }
@@ -309,88 +350,115 @@ int main(void)
 
 //temp thread, taken from assignment 5
 //checks for obstacles
-// void *irSensor(void *value)
-// {
-//   args *arguments = (struct args *)value;
-//   while (arguments->runFlag == 1)
-//   {
-//     /*if(digitalRead(IR_OUT) == 1){
-//             printf("Obstacle Detected\n");
-//         }*/
-
-//     //TODO condition will be replaced with digitalRead(sensor) call results
-//     int temporaryCondition = 1;
-//     if (temporaryCondition)
-//     {
-//       arguments->obstacleDetected = 1;
-
-//       //TODO Obstacle Avoidance
-//       //could be handled by new a thread
-//       //or atleast by another function
-//     }
-//   }
-// }
+void *irSensor(void *value)
+ {
+   args *arguments = (struct args *)value;
+   while (arguments->runFlag == 1)
+   {
+     /*if(digitalRead(IR_OUT) == 1){
+             printf("Obstacle Detected\n");
+         }*/
+     //TODO condition will be replaced with digitalRead(sensor) call results
+     int temporaryCondition = 1;
+     /*if (temporaryCondition)
+     {
+       arguments->obstacleDetected = 1
+       //TODO Obstacle Avoidance
+       //could be handled by new a thread
+       //or atleast by another function
+     }*/
+   }
+ }
 
 //temp thread, taken from assignment 5
 //checks for line, if not avoiding obstacle this adjusts heading
-// void *lineSensor(void *value)
-// {
-//   args *arguments = (struct args *)value;
-//   while (arguments->runFlag == 1)
-//   {
-//     while (arguments->obstacleDetected == 0)
-//     {
-//       /*if(digitalRead(LINE_SENSOR_DO) == 0){
-//             printf("No Longer on the Line\n");
-//           }*/
-
-//       //determine
-//       int n = 0;
-
-//       if (digitalRead(LINE_SENSOR_R_DO) == 1)
-//       {
-//         n += 1;
-//       }
-//       if (digitalRead(LINE_SENSOR_C_DO) == 1)
-//       {
-//         n += 2;
-//       }
-//       if (digitalRead(LINE_SENSOR_L_DO) == 1)
-//       {
-//         n += 4;
-//       }
-
-//       //TODO
-//       //may slow front motors to a stop
-//       //add conditions to maintain minimum speed
-//       switch (n)
-//       {
-//       case 0:
-//         //line lost
-//         break;
-//       case 1:
-//         //adjust hard right
-//         digitalWrite(MOTOR_VOLT_FR, arguments->frontRightPWM - HARD_ADJUST);
-//         break;
-//       case 3:
-//         //adjust soft right
-//         digitalWrite(MOTOR_VOLT_FR, arguments->frontRightPWM - SOFT_ADJUST);
-//         break;
-//       case 4:
-//         //adjust hard left
-//         digitalWrite(MOTOR_VOLT_FR, arguments->frontLeftPWM - HARD_ADJUST);
-//         break;
-//       case 6:
-//         //adjust soft left
-//         digitalWrite(MOTOR_VOLT_FR, arguments->frontLeftPWM - SOFT_ADJUST);
-//         break;
-//       default:
-//         //on line or edgecase
-//         break;
-//       }
-//     }
-//   }
-// }
+ void *lineSensor(void *value)
+ {
+   args *arguments = (struct args *)value;
+   while (arguments->runFlag == 1)
+   {
+     while (arguments->obstacleDetected == 0)
+     {
+       int n = 0;
+       if(digitalRead(LINE_SENSOR_R_DO) == 1)
+       {
+         n += 1;
+       }
+       if (digitalRead(LINE_SENSOR_C_DO) == 1)
+       {
+         n += 2;
+       }
+       if (digitalRead(LINE_SENSOR_L_DO) == 1)
+       {
+         n += 4;
+       }
+       //may slow front motors to a stop
+       //add conditions to maintain minimum speed
+       switch(n)
+       {
+       case 0:
+         //line lost
+         break;
+       case 1:
+         //adjust hard right
+         if(arguments->motor1_c1 > MIN_SPEED && arguments->motor2_c1 > MIN_SPEED){
+           arguments->motor1_c1 -= (2*ADJUST);
+           digitalWrite(MOTOR_1_CONTROL_1, arguments->motor1_c1);
+         }
+         //
+         else {
+           arguments->motor2_c1 += (2*ADJUST);
+           arguments->motor1_c1 = MIN_SPEED;
+           digitalWrite(MOTOR_2_CONTROL_1, arguments->motor2_c1);
+           digitalWrite(MOTOR_1_CONTROL_1, arguments->motor2_c1);
+          }
+         break;
+       case 3:
+         //adjust soft right
+         if(arguments->motor1_c1 > MIN_SPEED && arguments->motor2_c1 > MIN_SPEED){
+          arguments->motor1_c1 -= (ADJUST);
+           digitalWrite(MOTOR_1_CONTROL_1, arguments->motor1_c1);
+          }
+        else {
+          arguments->motor2_c1 += (ADJUST);
+          arguments->motor1_c1 = MIN_SPEED;
+          digitalWrite(MOTOR_2_CONTROL_1, arguments->motor2_c1);
+          digitalWrite(MOTOR_1_CONTROL_1, arguments->motor2_c1);
+         }
+         break;
+       case 4:
+         //adjust hard left
+         if(arguments->motor2_c1 > MIN_SPEED && arguments->motor1_c1 > MIN_SPEED){
+            arguments->motor2_c1 -= (2*ADJUST);
+            digitalWrite(MOTOR_2_CONTROL_1, arguments->motor2_c1);
+          }
+          else {
+            arguments->motor1_c1 += (2*ADJUST);
+            arguments->motor2_c1 = MIN_SPEED;
+            digitalWrite(MOTOR_2_CONTROL_1, arguments->motor2_c1);
+            digitalWrite(MOTOR_1_CONTROL_1, arguments->motor2_c1);
+          }
+         break;
+       case 6:
+         //adjust soft left
+         if(arguments->motor2_c1 > MIN_SPEED && arguments->motor1_c1 > MIN_SPEED){
+             arguments->motor2_c1 -= (ADJUST);
+             digitalWrite(MOTOR_2_CONTROL_1, arguments->motor2_c1);
+           }
+           else {
+             arguments->motor1_c1 += (ADJUST);
+             arguments->motor2_c1 = MIN_SPEED;
+             digitalWrite(MOTOR_2_CONTROL_1, arguments->motor2_c1);
+             digitalWrite(MOTOR_1_CONTROL_1, arguments->motor2_c1);
+           }
+         break;
+        default:
+         //on line or edgecase
+         break;
+       }
+     }
+   }
+ }
 
 //init Motors
 // pinMode(MOTOR_VOLT_FL, OUTPUT);
