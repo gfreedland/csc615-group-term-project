@@ -230,22 +230,12 @@ int main(void)
   arguments.motor4_c1 = OPTIMAL_SPEED;
   arguments.motor4_c2 = OPTIMAL_SPEED;
 
-  moveCarForward();
-  
-  //Run program until threads finish
-  pthread_create(&ir, NULL, irSensor, &arguments);
-  pthread_create(&line, NULL, lineSensor, &arguments);
-  //Join/Wait for threads to finish
-  pthread_join(ir, NULL);
-  pthread_join(line, NULL);
-
-
-  /*bool condition = true;
+  bool condition = true;
   while (condition)
   {
     int input;
     printf("Enter 1 to start all motors forward, Enter 2 to stop all motors, and 3 to exit the program");
-    printf("Enter 4 to go backwards, Enter 5 to turn right, Enter 6 to turn left");
+    printf("Enter 4 to go backwards, Enter 5 to turn right, Enter 6 to turn left, Enter 7 to test Program");
 
     scanf("%d", &input);
     switch (input)
@@ -276,13 +266,21 @@ int main(void)
       printf("Spin car Left In Place\n");
       spinCarLeft();
       break;
+    case 7:
+      printf("Spin car Left In Place\n");
+      moveCarForward();
+      //Run program until threads finish
+      pthread_create(&ir, NULL, irSensor, &arguments);
+      pthread_create(&line, NULL, lineSensor, &arguments);
+      /*Join/Wait for threads to finish
+      pthread_join(ir, NULL);
+      pthread_join(line, NULL);*/
+      break;
     default:
       printf("not a valid input");
       break;
     }
-  }*/
-
-
+  }
 
   printf("Program Ended");
   return 0;
