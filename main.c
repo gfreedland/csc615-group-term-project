@@ -375,15 +375,15 @@ void *lineSensor(void *value)
         printf("Hard left, n is 4\n");
         if (arguments->motor2_c1 > MIN_SPEED && arguments->motor1_c1 > MIN_SPEED)
         {
-          arguments->motor2_c1 -= (2 * ADJUST);
+          arguments->motor2_c1 += (2 * ADJUST);
           digitalWrite(MOTOR_2_CONTROL_1, arguments->motor2_c1);
         }
         else
         {
-          arguments->motor1_c1 += (2 * ADJUST);
+          arguments->motor1_c1 -= (2 * ADJUST);
           arguments->motor2_c1 = MIN_SPEED;
-          digitalWrite(MOTOR_2_CONTROL_1, arguments->motor2_c1);
-          digitalWrite(MOTOR_1_CONTROL_1, arguments->motor1_c1);
+          digitalWrite(MOTOR_1_CONTROL_1, arguments->motor2_c1);
+          digitalWrite(MOTOR_2_CONTROL_1, arguments->motor1_c1);
         }
         break;
       case 6:
