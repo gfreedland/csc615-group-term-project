@@ -338,17 +338,31 @@ void *lineSensor(void *value)
         stopCar();
         break;
       case 1:
-        //adjust hard right
-        printf("Hard right, n is 1 \n");
+        // //adjust hard right
+        // printf("Hard right, n is 1 \n");
+        // if (arguments->motor1_c1 > MIN_SPEED && arguments->motor2_c1 > MIN_SPEED)
+        // {
+        //   arguments->motor1_c1 -= (2 * ADJUST);
+        //   digitalWrite(MOTOR_1_CONTROL_1, arguments->motor1_c1);
+        // }
+        // //
+        // else
+        // {
+        //   arguments->motor2_c1 += (2 * ADJUST);
+        //   arguments->motor1_c1 = MIN_SPEED;
+        //   digitalWrite(MOTOR_2_CONTROL_1, arguments->motor2_c1);
+        //   digitalWrite(MOTOR_1_CONTROL_1, arguments->motor1_c1);
+        // }
+        // break;
+        printf("Soft right, n is 3 \n");
         if (arguments->motor1_c1 > MIN_SPEED && arguments->motor2_c1 > MIN_SPEED)
         {
-          arguments->motor1_c1 -= (2 * ADJUST);
+          arguments->motor1_c1 -= (ADJUST);
           digitalWrite(MOTOR_1_CONTROL_1, arguments->motor1_c1);
         }
-        //
         else
         {
-          arguments->motor2_c1 += (2 * ADJUST);
+          arguments->motor2_c1 += (ADJUST);
           arguments->motor1_c1 = MIN_SPEED;
           digitalWrite(MOTOR_2_CONTROL_1, arguments->motor2_c1);
           digitalWrite(MOTOR_1_CONTROL_1, arguments->motor1_c1);
