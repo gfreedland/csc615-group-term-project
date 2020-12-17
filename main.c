@@ -298,7 +298,7 @@ void *lineSensor(void *value)
       switch (n)
       {
       case 0:
-        printf("Line Lost \n");
+        // printf("Line Lost \n");
         //line lost
         //handle with extra sensor if needed
         //if(extra sensor is active){
