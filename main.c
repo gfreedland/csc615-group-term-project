@@ -45,7 +45,7 @@
 
 const int MILLISEC = 1000;
 const int OBSTACLE_WAIT_TIME = 5;
-const int OBSTACLE_DISTANCE = 50;
+const int OBSTACLE_DISTANCE = 20;
 const int MAX_RUN_TIME = 90;
 const int OPTIMAL_SPEED = 40;
 const int MIN_SPEED = 0;
