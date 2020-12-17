@@ -19,16 +19,16 @@
 
 //TEMPORARY DEFITIONS: Change as pins are chosen
 // //Line Sensor Voltage Control and Digital Output
-#define LINE_SENSOR_L_VCC 0;
-#define LINE_SENSOR_R_VCC 0;
-#define LINE_SENSOR_C_VCC 0;
-#define LINE_SENSOR_L_DO 0;
-#define LINE_SENSOR_R_DO 0;
-#define LINE_SENSOR_C_DO 0;
+// #define LINE_SENSOR_L_VCC 0;
+#define LINE_SENSOR_L_DO 7; // On board IR1
+// #define LINE_SENSOR_R_VCC 0;
+#define LINE_SENSOR_R_DO 12; // On board IR2
+// #define LINE_SENSOR_C_VCC 0;
+#define LINE_SENSOR_C_DO 27; // Physical pin 36
 //TODO define remaining sensors
-#define ECHO_VCC 0;
-#define ECHO_TRIG 0;
-#define ECHO_ECHO 0;
+// #define ECHO_VCC 0 // Don't need this as auto powered
+#define ECHO_TRIG 21
+#define ECHO_ECHO 22
 //update existing defitions with corresponding pin numbers
 
 //front right
@@ -343,7 +343,6 @@ void updateDistance(unsigned int *start, double *total, double *cm)
   }
   *total = total - start;
   *cm = (*total / 2.0) * .0340;
-
 }
 
 //temp thread, taken from assignment 5
