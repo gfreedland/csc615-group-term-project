@@ -47,7 +47,7 @@ const int MILLISEC = 1000;
 const int OBSTACLE_WAIT_TIME = 5;
 const int OBSTACLE_DISTANCE = 50;
 const int MAX_RUN_TIME = 90;
-const int OPTIMAL_SPEED = 16;
+const int OPTIMAL_SPEED = 50;
 const int MIN_SPEED = 10;
 const int ADJUST = 5;
 
@@ -248,16 +248,18 @@ void *echoSensor(void *value)
   double cm = 1000;
   while (arguments->runFlag == 1)
   {
-
     updateDistance(&start, &total, &cm);
+    printf("Echo Sensor Read: %d cm",cm);
     if (cm < OBSTACLE_DISTANCE)
     {
       arguments->obstacleDetected = 1;
       stopCar();
       delay(OBSTACLE_WAIT_TIME * MILLISEC);
       updateDistance(&start, &total, &cm);
+      printf("Echo Sensor Read: %d cm",cm);
       if (cm > OBSTACLE_DISTANCE)
       {
+        moveCarForward();
         arguments->obstacleDetected = 0;
       }
       else
@@ -435,7 +437,7 @@ int main(void)
       spinCarLeft();
       break;
     case 7:
-      printf("Spin car Left In Place\n");
+      printf("Start\n");
       moveCarForward();
       //Run program until threads finish
       pthread_create(&ir, NULL, echoSensor, &arguments);
