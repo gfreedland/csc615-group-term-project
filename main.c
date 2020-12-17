@@ -47,7 +47,7 @@ const int MILLISEC = 1000;
 const int OBSTACLE_WAIT_TIME = 5;
 const int OBSTACLE_DISTANCE = 20;
 const int MAX_RUN_TIME = 90;
-const int OPTIMAL_SPEED = 40;
+const int OPTIMAL_SPEED = 20;
 const int MIN_SPEED = 0;
 const int ADJUST = 8;
 
@@ -256,7 +256,7 @@ void *echoSensor(void *value)
       stopCar();
       delay(OBSTACLE_WAIT_TIME * MILLISEC);
       updateDistance(&start, &total, &cm);
-      printf("Echo Sensor Read: %d cm\n",cm);
+      printf("Echo Sensor Read: %d cm\n", cm);
       if (cm > OBSTACLE_DISTANCE)
       {
         moveCarForward();
@@ -298,7 +298,7 @@ void *lineSensor(void *value)
       switch (n)
       {
       case 0:
-      printf("Line Lost \n");
+        printf("Line Lost \n");
         //line lost
         //handle with extra sensor if needed
         //if(extra sensor is active){
@@ -307,31 +307,34 @@ void *lineSensor(void *value)
         //else{
         //   turn away
         //}
-        moveCarBackward();
+        stopCar();
+        // moveCarBackward();
         int maxRuns = 100;
-        while(n == 0){
-            if (digitalRead(LINE_SENSOR_R_DO) == 1)
-            {
-              n += 1;
-            }
-            if (digitalRead(LINE_SENSOR_C_DO) == 1)
-            {
-              n += 2;
-            }
-            if (digitalRead(LINE_SENSOR_L_DO) == 1)
-            {
-              n += 4;
-            }
-            maxRuns --;
-            if(maxRuns == 0){
-              break;
-            }
+        while (n == 0)
+        {
+          if (digitalRead(LINE_SENSOR_R_DO) == 1)
+          {
+            n += 1;
+          }
+          if (digitalRead(LINE_SENSOR_C_DO) == 1)
+          {
+            n += 2;
+          }
+          if (digitalRead(LINE_SENSOR_L_DO) == 1)
+          {
+            n += 4;
+          }
+          maxRuns--;
+          if (maxRuns == 0)
+          {
+            break;
+          }
         }
         moveCarForward();
         break;
       case 1:
         //adjust hard right
-        printf("Hard right \n");
+        // printf("Hard right \n");
         if (arguments->motor1_c1 > MIN_SPEED && arguments->motor2_c1 > MIN_SPEED)
         {
           arguments->motor1_c1 -= (2 * ADJUST);
