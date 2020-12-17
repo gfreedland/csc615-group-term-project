@@ -20,11 +20,11 @@
 //TEMPORARY DEFITIONS: Change as pins are chosen
 // //Line Sensor Voltage Control and Digital Output
 // #define LINE_SENSOR_L_VCC 0;
-#define LINE_SENSOR_L_DO 7; // On board IR1
+#define LINE_SENSOR_L_DO 7 // On board IR1
 // #define LINE_SENSOR_R_VCC 0;
-#define LINE_SENSOR_R_DO 12; // On board IR2
+#define LINE_SENSOR_R_DO 12 // On board IR2
 // #define LINE_SENSOR_C_VCC 0;
-#define LINE_SENSOR_C_DO 27; // Physical pin 36
+#define LINE_SENSOR_C_DO 27 // Physical pin 36
 //TODO define remaining sensors
 // #define ECHO_VCC 0 // Don't need this as auto powered
 #define ECHO_TRIG 21
@@ -112,17 +112,17 @@ void initilalizePins()
   digitalWrite(ECHO_TRIG, 0);
   digitalWrite(ECHO_ECHO, 0);
   //Init Line Sensor L
-  pinMode(LINE_SENSOR_L_VCC, OUTPUT);
+  // pinMode(LINE_SENSOR_L_VCC, OUTPUT);
   pinMode(LINE_SENSOR_L_DO, INPUT);
-  digitalWrite(LINE_SENSOR_L_VCC, 1);
+  // digitalWrite(LINE_SENSOR_L_VCC, 1);
   //Init Line Sensor C
-  pinMode(LINE_SENSOR_C_VCC, OUTPUT);
+  // pinMode(LINE_SENSOR_C_VCC, OUTPUT);
   pinMode(LINE_SENSOR_C_DO, INPUT);
-  digitalWrite(LINE_SENSOR_C_VCC, 1);
+  // digitalWrite(LINE_SENSOR_C_VCC, 1);
   //Init Line Sensor R
-  pinMode(LINE_SENSOR_R_VCC, OUTPUT);
+  // pinMode(LINE_SENSOR_R_VCC, OUTPUT);
   pinMode(LINE_SENSOR_R_DO, INPUT);
-  digitalWrite(LINE_SENSOR_R_VCC, 1);
+  // digitalWrite(LINE_SENSOR_R_VCC, 1);
 
   delay(100);
 }
