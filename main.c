@@ -47,9 +47,9 @@ const int MILLISEC = 1000;
 const int OBSTACLE_WAIT_TIME = 5;
 const int OBSTACLE_DISTANCE = 50;
 const int MAX_RUN_TIME = 90;
-const int OPTIMAL_SPEED = 50;
-const int MIN_SPEED = 10;
-const int ADJUST = 5;
+const int OPTIMAL_SPEED = 40;
+const int MIN_SPEED = 0;
+const int ADJUST = 8;
 
 typedef struct args
 {
@@ -249,14 +249,14 @@ void *echoSensor(void *value)
   while (arguments->runFlag == 1)
   {
     updateDistance(&start, &total, &cm);
-    printf("Echo Sensor Read: %d cm",cm);
+    printf("Echo Sensor Read: %d cm", cm);
     if (cm < OBSTACLE_DISTANCE)
     {
       arguments->obstacleDetected = 1;
       stopCar();
       delay(OBSTACLE_WAIT_TIME * MILLISEC);
       updateDistance(&start, &total, &cm);
-      printf("Echo Sensor Read: %d cm",cm);
+      printf("Echo Sensor Read: %d cm", cm);
       if (cm > OBSTACLE_DISTANCE)
       {
         moveCarForward();
