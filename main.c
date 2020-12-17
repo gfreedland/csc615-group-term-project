@@ -279,7 +279,7 @@ int main(void)
       printf("Spin car Left In Place\n");
       moveCarForward();
       //Run program until threads finish
-      pthread_create(&ir, NULL, irSensor, &arguments);
+      pthread_create(&ir, NULL, echoSensor, &arguments);
       pthread_create(&line, NULL, lineSensor, &arguments);
       /*Join/Wait for threads to finish
       pthread_join(ir, NULL);
@@ -296,7 +296,7 @@ int main(void)
 
 //temp thread, taken from assignment 5
 //checks for obstacles
-void *irSensor(void *value)
+void *echoSensor(void *value)
 {
   args *arguments = (struct args *)value;
   unsigned int start = micros(), run = micros(), total = micros();
