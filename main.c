@@ -302,27 +302,6 @@ void *echoSensor(void *value)
   unsigned int start = micros(), run = micros(), total = micros();
   double tot;
   double cm = 1000;
-
-  void updateDistance(unsigned int *start, double *total, double *cm)
-  {
-    digitalWrite(ECHO_TRIG, 0);
-    delayMicroseconds(10);
-    digitalWrite(ECHO_TRIG, 1);
-    delayMicroseconds(10);
-    digitalWrite(ECHO_TRIG, 0);
-    *start = micros();
-    while (digitalRead(ECHO_ECHO) == 0)
-    {
-      *start = micros();
-    }
-    while (digitalRead(ECHO_ECHO) == 1)
-    {
-      *total = micros();
-    }
-    *total = total - start;
-    *cm = (total / 2.0) * .0340;
-  }
-
   while (arguments->runFlag == 1)
   {
 
@@ -343,8 +322,28 @@ void *echoSensor(void *value)
         //evade
       }
     }
-    else
   }
+}
+
+void updateDistance(unsigned int *start, double *total, double *cm)
+{
+  digitalWrite(ECHO_TRIG, 0);
+  delayMicroseconds(10);
+  digitalWrite(ECHO_TRIG, 1);
+  delayMicroseconds(10);
+  digitalWrite(ECHO_TRIG, 0);
+  *start = micros();
+  while (digitalRead(ECHO_ECHO) == 0)
+  {
+    *start = micros();
+  }
+  while (digitalRead(ECHO_ECHO) == 1)
+  {
+    *total = micros();
+  }
+  *total = total - start;
+  *cm = (*total / 2.0) * .0340;
+
 }
 
 //temp thread, taken from assignment 5
