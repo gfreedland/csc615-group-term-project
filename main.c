@@ -47,8 +47,8 @@ const int MILLISEC = 1000;
 const int OBSTACLE_WAIT_TIME = 5;
 const int OBSTACLE_DISTANCE = 25;
 const int MAX_RUN_TIME = 90;
-const int OPTIMAL_SPEED = 15;
-const int MIN_SPEED = 10;
+const int OPTIMAL_SPEED = 20;
+const int MIN_SPEED = 14;
 const int ADJUST = 5;
 
 typedef struct args
@@ -342,13 +342,13 @@ void *lineSensor(void *value)
         printf("Hard right, n is 1 \n");
         if (arguments->motor1_c1 > MIN_SPEED && arguments->motor2_c1 > MIN_SPEED)
         {
-          arguments->motor1_c1 += (2 * ADJUST);
+          arguments->motor1_c1 -= (2 * ADJUST);
           digitalWrite(MOTOR_1_CONTROL_1, arguments->motor1_c1);
         }
         //
         else
         {
-          arguments->motor2_c1 -= (2 * ADJUST);
+          arguments->motor2_c1 += (2 * ADJUST);
           arguments->motor1_c1 = MIN_SPEED;
           digitalWrite(MOTOR_2_CONTROL_1, arguments->motor2_c1);
           digitalWrite(MOTOR_1_CONTROL_1, arguments->motor1_c1);
@@ -375,12 +375,12 @@ void *lineSensor(void *value)
         printf("Hard left, n is 4\n");
         if (arguments->motor2_c1 > MIN_SPEED && arguments->motor1_c1 > MIN_SPEED)
         {
-          arguments->motor2_c1 += (2 * ADJUST);
+          arguments->motor2_c1 -= (2 * ADJUST);
           digitalWrite(MOTOR_2_CONTROL_1, arguments->motor2_c1);
         }
         else
         {
-          arguments->motor1_c1 -= (2 * ADJUST);
+          arguments->motor1_c1 += (2 * ADJUST);
           arguments->motor2_c1 = MIN_SPEED;
           digitalWrite(MOTOR_1_CONTROL_1, arguments->motor2_c1);
           digitalWrite(MOTOR_2_CONTROL_1, arguments->motor1_c1);
