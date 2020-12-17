@@ -256,7 +256,7 @@ void *echoSensor(void *value)
       stopCar();
       delay(OBSTACLE_WAIT_TIME * MILLISEC);
       updateDistance(&start, &total, &cm);
-      printf("Echo Sensor Read: %d cm",cm);
+      printf("Echo Sensor Read: %d cm\n",cm);
       if (cm > OBSTACLE_DISTANCE)
       {
         moveCarForward();
@@ -298,6 +298,7 @@ void *lineSensor(void *value)
       switch (n)
       {
       case 0:
+      printf("Line Lost \n");
         //line lost
         //handle with extra sensor if needed
         //if(extra sensor is active){
@@ -309,6 +310,7 @@ void *lineSensor(void *value)
         //break;
       case 1:
         //adjust hard right
+        printf("Hard right \n");
         if (arguments->motor1_c1 > MIN_SPEED && arguments->motor2_c1 > MIN_SPEED)
         {
           arguments->motor1_c1 -= (2 * ADJUST);
@@ -325,6 +327,7 @@ void *lineSensor(void *value)
         break;
       case 3:
         //adjust soft right
+        printf("Soft right \n");
         if (arguments->motor1_c1 > MIN_SPEED && arguments->motor2_c1 > MIN_SPEED)
         {
           arguments->motor1_c1 -= (ADJUST);
@@ -340,6 +343,7 @@ void *lineSensor(void *value)
         break;
       case 4:
         //adjust hard left
+        printf("Hard left \n");
         if (arguments->motor2_c1 > MIN_SPEED && arguments->motor1_c1 > MIN_SPEED)
         {
           arguments->motor2_c1 -= (2 * ADJUST);
@@ -355,6 +359,7 @@ void *lineSensor(void *value)
         break;
       case 6:
         //adjust soft left
+        printf("Soft left \n");
         if (arguments->motor2_c1 > MIN_SPEED && arguments->motor1_c1 > MIN_SPEED)
         {
           arguments->motor2_c1 -= (ADJUST);
@@ -370,6 +375,7 @@ void *lineSensor(void *value)
         break;
       default:
         //on line or edgecase
+        printf("On Line or Edgecase met \n");
         break;
       }
     }
