@@ -189,10 +189,10 @@ void moveCarBackward()
   // softPwmWrite(MOTOR_3_CONTROL_1, 0);
   // softPwmWrite(MOTOR_4_CONTROL_1, 0);
   stopCar();
-  softPwmWrite(MOTOR_1_CONTROL_2, 50);
-  softPwmWrite(MOTOR_2_CONTROL_2, 50);
-  softPwmWrite(MOTOR_3_CONTROL_2, 50);
-  softPwmWrite(MOTOR_4_CONTROL_2, 50);
+  softPwmWrite(MOTOR_1_CONTROL_2, OPTIMAL_SPEED);
+  softPwmWrite(MOTOR_2_CONTROL_2, OPTIMAL_SPEED);
+  softPwmWrite(MOTOR_3_CONTROL_2, OPTIMAL_SPEED);
+  softPwmWrite(MOTOR_4_CONTROL_2, OPTIMAL_SPEED);
 }
 
 void spinCarRight()
@@ -307,7 +307,28 @@ void *lineSensor(void *value)
         //else{
         //   turn away
         //}
-        //break;
+        moveCarBackward();
+        int maxRuns = 100;
+        while(n == 0){
+            if (digitalRead(LINE_SENSOR_R_DO) == 1)
+            {
+              n += 1;
+            }
+            if (digitalRead(LINE_SENSOR_C_DO) == 1)
+            {
+              n += 2;
+            }
+            if (digitalRead(LINE_SENSOR_L_DO) == 1)
+            {
+              n += 4;
+            }
+            maxRuns --;
+            if(maxRuns == 0){
+              break;
+            }
+        }
+        moveCarForward();
+        break;
       case 1:
         //adjust hard right
         printf("Hard right \n");
