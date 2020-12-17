@@ -49,7 +49,7 @@ const int OBSTACLE_DISTANCE = 25;
 const int MAX_RUN_TIME = 90;
 const int OPTIMAL_SPEED = 20;
 const int MIN_SPEED = 14;
-const int ADJUST = 6;
+const int ADJUST = 8;
 
 typedef struct args
 {
