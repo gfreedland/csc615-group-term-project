@@ -218,7 +218,7 @@ void spinCarLeft()
 /**************************************************
 * Threaded functions and methods that they use.
 ***************************************************/
-void updateDistance(unsigned int *start, double *total, double *cm)
+void updateDistance(unsigned int *start, unsigned int *total, double *cm)
 {
   digitalWrite(ECHO_TRIG, 0);
   delayMicroseconds(10);
@@ -234,7 +234,7 @@ void updateDistance(unsigned int *start, double *total, double *cm)
   {
     *total = micros();
   }
-  *total = total - start;
+  *total = *total - *start;
   *cm = (*total / 2.0) * .0340;
 }
 
