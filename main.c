@@ -19,7 +19,7 @@
 
 // Line Sensor Voltage Control and Digital Output
 #define LINE_SENSOR_L_DO 7  // On board IR1
-#define LINE_SENSOR_R_DO 12 // On board IR2
+#define LINE_SENSOR_R_DO 1  // On board IR2
 #define LINE_SENSOR_C_DO 27 // Physical pin 36
 #define ECHO_TRIG 21
 #define ECHO_ECHO 22
