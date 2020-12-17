@@ -18,17 +18,6 @@
 #include <softPwm.h>
 
 //TEMPORARY DEFITIONS: Change as pins are chosen
-//Motor Voltage Control and Direction
-// #define MOTOR_1_ENABLE 0    // 11 physical pin for motor 1
-// #define MOTOR_VOLT_FL 0;
-// #define MOTOR_VOLT_FR 0;
-// #define MOTOR_VOLT_RL 0;
-// #define MOTOR_VOLT_RR 0;
-// #define MOTOR_DIR_FL 0;
-// #define MOTOR_DIR_FR 0;
-// #define MOTOR_DIR_RL 0;
-// #define MOTOR_DIR_RR 0;
-
 // //Line Sensor Voltage Control and Digital Output
 #define LINE_SENSOR_L_VCC 0;
 #define LINE_SENSOR_R_VCC 0;
@@ -69,7 +58,6 @@ const int MAX_RUN_TIME = 90;
 const int OPTIMAL_SPEED = 50;
 const int MIN_SPEED = 10;
 const int ADJUST = 5;
-//const int HARD_ADJUST = 10;
 
 typedef struct args
 {
@@ -306,66 +294,6 @@ int main(void)
   return 0;
 }
 
-// initializePins();
-
-// //initialize arguments
-// pthread_t ir;
-// pthread_t line;
-
-// args arguments;
-// arguments.runFlag = 1;
-// arguments.obstacleDetected = 0;
-
-// // Run program until threads finish
-/*
-    pthread_create(&ir, NULL, irSensor, &arguments);
-    pthread_create(&line, NULL, lineSensor, &arguments);
-
-    // // Join/Wait for threads to finish
-    pthread_join(ir, NULL);
-    pthread_join(line, NULL);
-    */
-
-// digitalWrite(MOTOR_DIR_FR, 1);
-// digitalWrite(MOTOR_DIR_FL, 1);
-// digitalWrite(MOTOR_DIR_RR, 1);
-// digitalWrite(MOTOR_DIR_RL, 1);
-
-// startColdMotors();
-// while (1)
-// {
-// }
-// // Clear Pins
-
-// void clearPins()
-// {
-//   pinMode(MOTOR_VOLT_FL, INPUT)
-//       pinMode(MOTOR_VOLT_FR, INPUT)
-//           pinMode(MOTOR_VOLT_RL, INPUT)
-//               pinMode(MOTOR_VOLT_RR, INPUT)
-//                   pinMode(MOTOR_DIR_FL, INPUT);
-//   pinMode(MOTOR_DIR_FR, INPUT);
-//   pinMode(MOTOR_DIR_RL, INPUT);
-//   pinMode(MOTOR_DIR_RR, INPUT);
-
-//   pinMode(LINE_SENSOR_L_VCC, INPUT);
-//   pinMode(LINE_SENSOR_R_VCC, INPUT);
-//   pinMode(LINE_SENSOR_C_VCC, INPUT);
-
-//   digitalWrite(LINE_SENSOR_L_VCC, LOW);
-//   digitalWrite(LINE_SENSOR_R_VCC, LOW);
-//   digitalWrite(LINE_SENSOR_C_VCC, LOW);
-//   //TODO clean newly added pins as they come online
-// }
-
-// void startColdMotors()
-// {
-//   softPwmWrite(MOTOR_VOLT_FL, 100);
-//   softPwmWrite(MOTOR_VOLT_FR, 100);
-//   softPwmWrite(MOTOR_VOLT_RL, 100);
-//   softPwmWrite(MOTOR_VOLT_RR, 100);
-// }
-
 //temp thread, taken from assignment 5
 //checks for obstacles
 void *irSensor(void *value)
@@ -523,40 +451,3 @@ void *lineSensor(void *value)
     }
   }
 }
-
-//init Motors
-// pinMode(MOTOR_VOLT_FL, OUTPUT);
-// pinMode(MOTOR_VOLT_FR, OUTPUT);
-// pinMode(MOTOR_VOLT_RL, OUTPUT);
-// pinMode(MOTOR_VOLT_RR, OUTPUT);
-// pinMode(MOTOR_DIR_FL, OUTPUT);
-// pinMode(MOTOR_DIR_FR, OUTPUT);
-// pinMode(MOTOR_DIR_RL, OUTPUT);
-// pinMode(MOTOR_DIR_RR, OUTPUT);
-
-// softPwmCreate(MOTOR_VOLT_FL, 0, 100);
-// softPwmCreate(MOTOR_VOLT_FR, 0, 100);
-// softPwmCreate(MOTOR_VOLT_RL, 0, 100);
-// softPwmCreate(MOTOR_VOLT_RR, 0, 100);
-
-// digitalWrite(MOTOR_DIR_FL, HIGH);
-// digitalWrite(MOTOR_DIR_FR, HIGH);
-// digitalWrite(MOTOR_DIR_RL, HIGH);
-// digitalWrite(MOTOR_DIR_RR, HIGH);
-
-// //init Line Sensors
-// pinMode(LINE_SENSOR_L_VCC, OUTPUT);
-// pinMode(LINE_SENSOR_R_VCC, OUTPUT);
-// pinMode(LINE_SENSOR_C_VCC, OUTPUT);
-
-// pinMode(LINE_SENSOR_L_DO, INPUT);
-// pinMode(LINE_SENSOR_R_DO, INPUT);
-// pinMode(LINE_SENSOR_C_DO, INPUT);
-
-// digitalWrite(LINE_SENSOR_L_VCC, HIGH);
-// digitalWrite(LINE_SENSOR_R_VCC, HIGH);
-// digitalWrite(LINE_SENSOR_C_VCC, HIGH);
-
-// TODO
-//init Servo
-//init Collision Detection
