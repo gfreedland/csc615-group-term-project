@@ -256,11 +256,7 @@ void *echoSensor(void *value)
       stopCar();
       delay(OBSTACLE_WAIT_TIME * MILLISEC);
       updateDistance(&start, &total, &cm);
-<<<<<<< HEAD
       printf("Echo Sensor Read: %d cm\n",cm);
-=======
-      printf("Echo Sensor Read: %d cm", cm);
->>>>>>> 72bb112d0a6b58416d840a161e5aebec52f346f4
       if (cm > OBSTACLE_DISTANCE)
       {
         moveCarForward();
@@ -302,7 +298,6 @@ void *lineSensor(void *value)
       switch (n)
       {
       case 0:
-<<<<<<< HEAD
       printf("Line Lost \n");
         //line lost
         //handle with extra sensor if needed
@@ -313,10 +308,6 @@ void *lineSensor(void *value)
         //   turn away
         //}
         //break;
-=======
-          System.out.println("Lost line, stop car");
-          stopCar();
->>>>>>> 72bb112d0a6b58416d840a161e5aebec52f346f4
       case 1:
         //adjust hard right
         printf("Hard right \n");
@@ -467,6 +458,8 @@ int main(void)
       break;
     }
   }
+  pthread_join(ir, NULL);
+  pthread_join(line, NULL);
   printf("Program Ended");
   return 0;
 }
