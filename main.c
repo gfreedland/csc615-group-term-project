@@ -351,7 +351,7 @@ void *lineSensor(void *value)
         break;
       case 3:
         //adjust soft right
-        printf("Soft right \n");
+        // printf("Soft right \n");
         if (arguments->motor1_c1 > MIN_SPEED && arguments->motor2_c1 > MIN_SPEED)
         {
           arguments->motor1_c1 -= (ADJUST);
