@@ -343,7 +343,7 @@ void *lineSensor(void *value)
           arguments->motor2_c1 += (2 * ADJUST);
           arguments->motor1_c1 = MIN_SPEED;
           digitalWrite(MOTOR_2_CONTROL_1, arguments->motor2_c1);
-          digitalWrite(MOTOR_1_CONTROL_1, arguments->motor2_c1);
+          digitalWrite(MOTOR_1_CONTROL_1, arguments->motor1_c1);
         }
         break;
       case 3:
@@ -359,7 +359,7 @@ void *lineSensor(void *value)
           arguments->motor2_c1 += (ADJUST);
           arguments->motor1_c1 = MIN_SPEED;
           digitalWrite(MOTOR_2_CONTROL_1, arguments->motor2_c1);
-          digitalWrite(MOTOR_1_CONTROL_1, arguments->motor2_c1);
+          digitalWrite(MOTOR_1_CONTROL_1, arguments->motor1_c1);
         }
         break;
       case 4:
@@ -375,7 +375,7 @@ void *lineSensor(void *value)
           arguments->motor1_c1 += (2 * ADJUST);
           arguments->motor2_c1 = MIN_SPEED;
           digitalWrite(MOTOR_2_CONTROL_1, arguments->motor2_c1);
-          digitalWrite(MOTOR_1_CONTROL_1, arguments->motor2_c1);
+          digitalWrite(MOTOR_1_CONTROL_1, arguments->motor1_c1);
         }
         break;
       case 6:
@@ -391,7 +391,7 @@ void *lineSensor(void *value)
           arguments->motor1_c1 += (ADJUST);
           arguments->motor2_c1 = MIN_SPEED;
           digitalWrite(MOTOR_2_CONTROL_1, arguments->motor2_c1);
-          digitalWrite(MOTOR_1_CONTROL_1, arguments->motor2_c1);
+          digitalWrite(MOTOR_1_CONTROL_1, arguments->motor1_c1);
         }
         break;
       default:
