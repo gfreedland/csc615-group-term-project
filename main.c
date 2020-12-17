@@ -402,6 +402,9 @@ void *lineSensor(void *value)
           digitalWrite(MOTOR_1_CONTROL_1, arguments->motor1_c1);
         }
         break;
+      case 7:
+        moveCarForward();
+        break;
       default:
         //on line or edgecase
         printf("On Line or Edgecase met, n is %d \n", n);
