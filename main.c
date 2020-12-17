@@ -19,7 +19,7 @@
 
 // Line Sensor Voltage Control and Digital Output
 #define LINE_SENSOR_L_DO 7  // On board IR1
-#define LINE_SENSOR_R_DO 12 // On board IR2
+#define LINE_SENSOR_R_DO 1  // On board IR2
 #define LINE_SENSOR_C_DO 27 // Physical pin 36
 #define ECHO_TRIG 21
 #define ECHO_ECHO 22
@@ -47,8 +47,8 @@ const int MILLISEC = 1000;
 const int OBSTACLE_WAIT_TIME = 5;
 const int OBSTACLE_DISTANCE = 20;
 const int MAX_RUN_TIME = 90;
-const int OPTIMAL_SPEED = 40;
-const int MIN_SPEED = 0;
+const int OPTIMAL_SPEED = 15;
+const int MIN_SPEED = 10;
 const int ADJUST = 8;
 
 typedef struct args
@@ -256,7 +256,7 @@ void *echoSensor(void *value)
       stopCar();
       delay(OBSTACLE_WAIT_TIME * MILLISEC);
       updateDistance(&start, &total, &cm);
-      printf("Echo Sensor Read: %d cm\n",cm);
+      printf("Echo Sensor Read: %d cm\n", cm);
       if (cm > OBSTACLE_DISTANCE)
       {
         moveCarForward();
@@ -298,7 +298,7 @@ void *lineSensor(void *value)
       switch (n)
       {
       case 0:
-      printf("Line Lost \n");
+        printf("Line Lost \n");
         //line lost
         //handle with extra sensor if needed
         //if(extra sensor is active){
@@ -307,33 +307,39 @@ void *lineSensor(void *value)
         //else{
         //   turn away
         //}
+        /*
         stopCar();
         moveCarBackward();
         int maxRuns = 100;
-        while(n == 0){
-            if (digitalRead(LINE_SENSOR_R_DO) == 1)
-            {
-              n += 1;
-            }
-            if (digitalRead(LINE_SENSOR_C_DO) == 1)
-            {
-              n += 2;
-            }
-            if (digitalRead(LINE_SENSOR_L_DO) == 1)
-            {
-              n += 4;
-            }
-            maxRuns --;
-            if(maxRuns == 0){
-              break;
-            }
+        while (n == 0)
+        {
+          printf("Off Line or Edgecase met, n is 0 \n");
+          if (digitalRead(LINE_SENSOR_R_DO) == 1)
+          {
+            n += 1;
+          }
+          if (digitalRead(LINE_SENSOR_C_DO) == 1)
+          {
+            n += 2;
+          }
+          if (digitalRead(LINE_SENSOR_L_DO) == 1)
+          {
+            n += 4;
+          }
+          maxRuns--;
+          if (maxRuns == 0)
+          {
+            break;
+          }
         }
         stopCar();
         moveCarForward();
+        */
+       stopCar();
         break;
       case 1:
         //adjust hard right
-        printf("Hard right \n");
+        printf("Hard right, n is 1 \n");
         if (arguments->motor1_c1 > MIN_SPEED && arguments->motor2_c1 > MIN_SPEED)
         {
           arguments->motor1_c1 -= (2 * ADJUST);
@@ -350,7 +356,7 @@ void *lineSensor(void *value)
         break;
       case 3:
         //adjust soft right
-        printf("Soft right \n");
+        printf("Soft right, n is 3 \n");
         if (arguments->motor1_c1 > MIN_SPEED && arguments->motor2_c1 > MIN_SPEED)
         {
           arguments->motor1_c1 -= (ADJUST);
@@ -366,7 +372,7 @@ void *lineSensor(void *value)
         break;
       case 4:
         //adjust hard left
-        printf("Hard left \n");
+        printf("Hard left, n is 4\n");
         if (arguments->motor2_c1 > MIN_SPEED && arguments->motor1_c1 > MIN_SPEED)
         {
           arguments->motor2_c1 -= (2 * ADJUST);
@@ -382,7 +388,7 @@ void *lineSensor(void *value)
         break;
       case 6:
         //adjust soft left
-        printf("Soft left \n");
+        printf("Soft left, n is 6 \n");
         if (arguments->motor2_c1 > MIN_SPEED && arguments->motor1_c1 > MIN_SPEED)
         {
           arguments->motor2_c1 -= (ADJUST);
@@ -398,7 +404,7 @@ void *lineSensor(void *value)
         break;
       default:
         //on line or edgecase
-        printf("On Line or Edgecase met \n");
+        printf("On Line or Edgecase met, n is %d \n", n);
         break;
       }
     }
