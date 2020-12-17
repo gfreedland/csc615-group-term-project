@@ -249,7 +249,7 @@ void *echoSensor(void *value)
   while (arguments->runFlag == 1)
   {
     updateDistance(&start, &total, &cm);
-    printf("Echo Sensor Read: %d cm", cm);
+    printf("Echo Sensor Read: %d cm\n", cm);
     if (cm < OBSTACLE_DISTANCE)
     {
       arguments->obstacleDetected = 1;
@@ -444,13 +444,14 @@ int main(void)
       break;
     case 2:
       printf("Stop all motors\n");
-      arguments.runFlag = 0;
+      
       stopCar();
       break;
     case 3:
       printf("Exitting program\n");
       clearPins();
       condition = false;
+      arguments.runFlag = 0;
       break;
     case 4:
       printf("Move all motors backwards\n");
@@ -467,7 +468,7 @@ int main(void)
     case 7:
       printf("Start\n");
       moveCarForward();
-      //Run program until threads finish
+      //Run program until stopped by case 3
       pthread_create(&ir, NULL, echoSensor, &arguments);
       pthread_create(&line, NULL, lineSensor, &arguments);
       /*Join/Wait for threads to finish
