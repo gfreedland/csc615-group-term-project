@@ -47,8 +47,8 @@ const int MILLISEC = 1000;
 const int OBSTACLE_WAIT_TIME = 5;
 const int OBSTACLE_DISTANCE = 25;
 const int MAX_RUN_TIME = 90;
-const int OPTIMAL_SPEED = 14;
-const int MIN_SPEED = 5;
+const int OPTIMAL_SPEED = 18;
+const int MIN_SPEED = 10;
 const int ADJUST = 8;
 
 typedef struct args
