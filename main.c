@@ -307,6 +307,7 @@ void *lineSensor(void *value)
         //else{
         //   turn away
         //}
+        stopCar();
         moveCarBackward();
         int maxRuns = 100;
         while(n == 0){
@@ -327,6 +328,7 @@ void *lineSensor(void *value)
               break;
             }
         }
+        stopCar();
         moveCarForward();
         break;
       case 1:
